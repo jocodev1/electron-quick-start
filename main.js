@@ -33,7 +33,7 @@ function createWindow () {
     }
   })
 
-  listenToWindowEvents(mainWindow)
+  listenToWindowEvents()
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
