@@ -6,15 +6,34 @@ const path = require('path')
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
+const listenToWindowEvents = () => {
+  console.log('start listening to window events...')
+
+  mainWindow.on('unresponsive', () => {
+    console.log('window is unresponsive')
+  })
+
+  mainWindow.webContents.on('unresponsive', () => {
+    console.log('window contents are unresponsive')
+  })
+  
+  mainWindow.webContents.on('crashed', () => {
+    console.log('window contents have crashed')
+  })
+}
+
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
+      nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
     }
   })
+
+  listenToWindowEvents(mainWindow)
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
@@ -35,6 +54,10 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
+
+app.on('renderer-process-crashed', () => {
+  console.log('renderer process crashed');
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
